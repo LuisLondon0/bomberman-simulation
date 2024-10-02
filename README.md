@@ -1,28 +1,38 @@
-# Backend del proyecto de regalias (presupuesto)
+# Bomberman Simulation with the Mesa Framework
 
-Tener python 3.12.6 instalado (con el path activado) y la libreria virtualenv
+Make sure you have Python 3.12.6 installed (with the path activated) and the virtualenv library.
 
-# Ejecutar en consola:
-### 1. Creamos el entrono virtual
+# Run in the console:
+### 1. Create the virtual environment
 
+```bash
 virtualenv venv
+```
 
-### 2. Activamos el entorno virtual
+### 2. Activate the virtual environment
 
 -----------------------------
 
-En bash:<br>
+In bash:
+```bash
 source venv/Scripts/activate
+```
 
-En cmd:<br>
+In cmd:
+```cmd
 .\venv\Scripts\activate
+```
 
 -----------------------------
 
-### 3. Instalamos las librerias necesarias
+### 3. Install the necessary libraries
 
+```bash
 pip install -r "requirements.txt"
+```
 
-### 4. Ejecutamos el programa
+### 4. Run the program
 
+```bash
 python main.py
+```
