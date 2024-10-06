@@ -26,12 +26,20 @@ def agent_portrayal(agent):
         portrayal["Layer"] = 1
     elif type(agent) is GoalAgent:
         portrayal["Shape"] = "assets/images/goal.png"
-        portrayal["Layer"] = 1
+        portrayal["Layer"] = 0
     elif type(agent) is MetalAgent:
         portrayal["Shape"] = "assets/images/metal.png"
         portrayal["Layer"] = 1
     elif type(agent) is RoadAgent:
-        portrayal["Shape"] = "assets/images/road.png"
+        if agent.visit_order:
+            portrayal["text"] = str(agent.visit_order)
+            portrayal["text_color"] = "black" 
+
+        if agent.is_visited:
+            portrayal["Shape"] = "assets/images/road_visited.png"
+        else:
+            portrayal["Shape"] = "assets/images/road.png"
+
         portrayal["Layer"] = 0
     elif type(agent) is RockAgent:
         portrayal["Shape"] = "assets/images/rock.png"
