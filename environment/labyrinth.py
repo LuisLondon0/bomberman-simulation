@@ -2,8 +2,9 @@ from mesa import Model
 from mesa.time import RandomActivation
 from mesa.space import MultiGrid
 from factories.agent_factory import AgentFactory
-from searches.uninformed_searchs.dfs import dfs
-from searches.uninformed_searchs.bfs import bfs
+from searches.uninformed_searchs.dfs import DFS
+from searches.uninformed_searchs.bfs import BFS
+from searches.uninformed_searchs.uniform_cost import UniformCostSearch
 from agents.bomberman import BombermanAgent
 from agents.goal import GoalAgent
 
@@ -30,7 +31,7 @@ class LabyrinthModel(Model):
                     road = AgentFactory.create_agent("road", (x, y), self)
                     self.grid.place_agent(road, (x, y))
                     self.schedule.add(road)
-                    search_strategy = dfs()
+                    search_strategy = UniformCostSearch()
                     bomberman = AgentFactory.create_agent("bomberman", (x, y), self, search_strategy)
                     self.grid.place_agent(bomberman, (x, y))
                     self.schedule.add(bomberman)

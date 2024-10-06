@@ -2,7 +2,7 @@ from searches.search_strategy import SearchStrategy
 from agents.goal import GoalAgent
 from agents.road import RoadAgent
 
-class dfs(SearchStrategy):
+class DFS(SearchStrategy):
     def __init__(self):
         self.stack = []
         self.visited = set()

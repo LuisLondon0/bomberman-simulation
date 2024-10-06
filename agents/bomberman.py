@@ -12,7 +12,7 @@ class BombermanAgent(Agent):
     def explore_step(self):
         current_position = self.pos
         if not self.has_explored:
-            next_position = self.search_strategy.explore_step(self, current_position)
+            next_position = self.search_strategy.explore_step(self, current_position, True)
             print(next_position)
 
             if next_position is not None:
