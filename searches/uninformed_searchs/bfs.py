@@ -12,7 +12,7 @@ class BFS(SearchStrategy):
     def start_search(self, start):
         self.queue.append((start))
 
-    def explore_step(self, agent, current, diagonal=False):
+    def explore_step(self, agent, diagonal=False):
         if not self.queue:
             return None
         

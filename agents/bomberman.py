@@ -9,15 +9,6 @@ class BombermanAgent(Agent):
         self.has_explored = False
         self.is_search_initialized = False
 
-    def explore_step(self):
-        current_position = self.pos
-        if not self.has_explored:
-            next_position = self.search_strategy.explore_step(self, current_position, True)
-            print(next_position)
-
-            if next_position is not None:
-                self.model.grid.move_agent(self, next_position)
-
     def move_to_exit(self):
         if self.path_to_exit:
             next_position = self.path_to_exit.pop(0)
@@ -31,7 +22,7 @@ class BombermanAgent(Agent):
             self.is_search_initialized = True
         
         if not self.has_explored:
-            self.search_strategy.explore_step(self, self.pos)
+            self.search_strategy.explore_step(self)
         else:
             if self.path_to_exit:
                 next_pos = self.path_to_exit.pop(0)

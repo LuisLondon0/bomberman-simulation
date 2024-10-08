@@ -17,7 +17,7 @@ class UniformCostSearch(SearchStrategy):
         self.cost_so_far[start[0]] = 0
         self.index += 1
 
-    def explore_step(self, agent, current, diagonal=False):
+    def explore_step(self, agent, diagonal=False):
         if not self.priority_queue:
             return None
 

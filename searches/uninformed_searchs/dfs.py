@@ -11,7 +11,7 @@ class DFS(SearchStrategy):
     def start_search(self, start):
         self.stack.append(start)
 
-    def explore_step(self, agent, current, diagonal = False):
+    def explore_step(self, agent, diagonal = False):
         if not self.stack:
             return None
         

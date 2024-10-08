@@ -38,6 +38,7 @@ class LabyrinthModel(Model):
                     road = AgentFactory.create_agent("road", (x, y), self)
                     self.grid.place_agent(road, (x, y))
                     self.schedule.add(road)
+                    road.is_visited = True
                     bomberman = AgentFactory.create_agent("bomberman", (x, y), self, search_strategy)
                     self.grid.place_agent(bomberman, (x, y))
                     self.schedule.add(bomberman)
