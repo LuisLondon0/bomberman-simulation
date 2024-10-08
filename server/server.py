@@ -1,5 +1,6 @@
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.modules import CanvasGrid
+from mesa.visualization import Choice
 
 #Import agents
 from agents.bomberman import BombermanAgent
@@ -28,21 +29,25 @@ def agent_portrayal(agent):
         portrayal["Shape"] = "assets/images/goal.png"
         portrayal["Layer"] = 0
     elif type(agent) is MetalAgent:
-        portrayal["Shape"] = "assets/images/metal.png"
+        portrayal["Shape"] = "rect"
+        portrayal["Color"] = "gray"
+        portrayal["r"] = 1
         portrayal["Layer"] = 1
     elif type(agent) is RoadAgent:
         if agent.visit_order:
             portrayal["text"] = str(agent.visit_order)
             portrayal["text_color"] = "black" 
-
         if agent.is_visited:
-            portrayal["Shape"] = "assets/images/road_visited.png"
+            portrayal["Color"] = "goldenrod"
         else:
-            portrayal["Shape"] = "assets/images/road.png"
-
+            portrayal["Color"] = "green"
+        portrayal["Shape"] = "rect"
+        portrayal["r"] = 1
         portrayal["Layer"] = 0
     elif type(agent) is RockAgent:
-        portrayal["Shape"] = "assets/images/rock.png"
+        portrayal["Shape"] = "rect"
+        portrayal["Color"] = "firebrick"
+        portrayal["r"] = 1
         portrayal["Layer"] = 1
 
     return portrayal
@@ -51,6 +56,18 @@ def create_server(map):
     height = len(map)
     width = len(map[0])
     grid = CanvasGrid(agent_portrayal, width, height, 500, 500)
-    server = ModularServer(LabyrinthModel, [grid], "Bomberman", {"height": height, "width": width, "map": map})
+
+    params = {
+        "height": height,
+        "width": width,
+        "map": map,
+        "search_strategy": Choice(
+            "Search strategy",
+            value="DFS",
+            choices=["DFS", "BFS", "UCS"],
+        )
+    }
+
+    server = ModularServer(LabyrinthModel, [grid], "Bomberman", params)
     server.port = 8521
     return server

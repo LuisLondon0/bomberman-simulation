@@ -9,9 +9,16 @@ from agents.bomberman import BombermanAgent
 from agents.goal import GoalAgent
 
 class LabyrinthModel(Model):
-    def __init__(self, width, height, map):
+    def __init__(self, width, height, map, search_strategy):
         self.grid = MultiGrid(width, height, True)
         self.schedule = RandomActivation(self)
+
+        if search_strategy == "DFS":
+            search_strategy = DFS()
+        elif search_strategy == "BFS":
+            search_strategy = BFS()
+        elif search_strategy == "UCS":
+            search_strategy = UniformCostSearch()
 
         for y, row in enumerate(map):
             for x, cell in enumerate(row):
@@ -31,7 +38,6 @@ class LabyrinthModel(Model):
                     road = AgentFactory.create_agent("road", (x, y), self)
                     self.grid.place_agent(road, (x, y))
                     self.schedule.add(road)
-                    search_strategy = UniformCostSearch()
                     bomberman = AgentFactory.create_agent("bomberman", (x, y), self, search_strategy)
                     self.grid.place_agent(bomberman, (x, y))
                     self.schedule.add(bomberman)
