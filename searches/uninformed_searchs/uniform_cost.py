@@ -40,7 +40,8 @@ class UniformCostSearch(SearchStrategy):
                     (0, -1, False), (-1, -1, True), (-1, 0, False), (-1, 1, True)
                 ]
             else:
-                directions = [(0, 1, False), (1, 0, False), (0, -1, False), (-1, 0, False)]
+                #directions = [(0, 1, False), (1, 0, False), (0, -1, False), (-1, 0, False)]
+                directions = [(-1, 0, False), (0, 1, False), (1, 0, False), (0, -1, False)]
 
             for direction in directions:
                 new_x, new_y, is_diagonal = current[0] + direction[0], current[1] + direction[1], direction[2]
