@@ -2,23 +2,17 @@ from mesa import Model
 from mesa.time import RandomActivation
 from mesa.space import MultiGrid
 from factories.agent_factory import AgentFactory
-from searches.uninformed_searchs.dfs import DFS
-from searches.uninformed_searchs.bfs import BFS
-from searches.uninformed_searchs.uniform_cost import UniformCostSearch
+from factories.search_factory import SearchFactory
 from agents.bomberman import BombermanAgent
 from agents.goal import GoalAgent
+from agents.enemy import EnemyAgent
 
 class LabyrinthModel(Model):
     def __init__(self, width, height, map, search_strategy):
         self.grid = MultiGrid(width, height, True)
         self.schedule = RandomActivation(self)
 
-        if search_strategy == "DFS":
-            search_strategy = DFS()
-        elif search_strategy == "BFS":
-            search_strategy = BFS()
-        elif search_strategy == "UCS":
-            search_strategy = UniformCostSearch()
+        search_strategy = SearchFactory.create_search(search_strategy)
 
         for y, row in enumerate(map):
             for x, cell in enumerate(row):
@@ -46,6 +40,13 @@ class LabyrinthModel(Model):
                     goal = AgentFactory.create_agent("goal", (x, y), self)
                     self.grid.place_agent(goal, (x, y))
                     self.schedule.add(goal)
+                elif cell == "C_e":
+                    road = AgentFactory.create_agent("road", (x, y), self)
+                    self.grid.place_agent(road, (x, y))
+                    self.schedule.add(road)
+                    goal = AgentFactory.create_agent("enemy", (x, y), self)
+                    self.grid.place_agent(goal, (x, y))
+                    self.schedule.add(goal)
 
         self.running = True
 
@@ -58,6 +59,12 @@ class LabyrinthModel(Model):
             cell_content, (x, y) = cell
             bomberman_present = any(isinstance(agent, BombermanAgent) for agent in cell_content)
             goal_present = any(isinstance(agent, GoalAgent) for agent in cell_content)
+            enemy_present = any(isinstance(agent, EnemyAgent) for agent in cell_content)
+            
             if bomberman_present and goal_present:
+                self.running = False
+                break
+            
+            if bomberman_present and enemy_present:
                 self.running = False
                 break

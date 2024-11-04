@@ -8,6 +8,7 @@ from agents.goal import GoalAgent
 from agents.metal import MetalAgent
 from agents.road import RoadAgent
 from agents.rock import RockAgent
+from agents.enemy import EnemyAgent
 
 #Import model
 from environment.labyrinth import LabyrinthModel
@@ -27,6 +28,9 @@ def agent_portrayal(agent):
         portrayal["Layer"] = 1
     elif type(agent) is GoalAgent:
         portrayal["Shape"] = "assets/images/goal.png"
+        portrayal["Layer"] = 0
+    elif type(agent) is EnemyAgent:
+        portrayal["Shape"] = "assets/images/enemy.png"
         portrayal["Layer"] = 0
     elif type(agent) is MetalAgent:
         portrayal["Shape"] = "rect"

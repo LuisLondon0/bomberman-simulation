@@ -4,6 +4,7 @@ from agents.goal import GoalAgent
 from agents.metal import MetalAgent
 from agents.road import RoadAgent
 from agents.rock import RockAgent
+from agents.enemy import EnemyAgent
 
 class AgentFactory:
     @staticmethod
@@ -18,5 +19,7 @@ class AgentFactory:
             return RoadAgent(unique_id, model)
         elif type == "rock":
             return RockAgent(unique_id, model)
+        elif type == "enemy":
+            return EnemyAgent(unique_id, model, search_strategy)
         else:
             raise ValueError("Invalid agent type")
