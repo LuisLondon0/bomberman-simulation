@@ -9,6 +9,8 @@ from agents.metal import MetalAgent
 from agents.road import RoadAgent
 from agents.rock import RockAgent
 from agents.enemy import EnemyAgent
+from agents.bomb import BombAgent
+from agents.blast import BlastAgent
 
 #Import model
 from environment.labyrinth import LabyrinthModel
@@ -26,6 +28,12 @@ def agent_portrayal(agent):
     if type(agent) is BombermanAgent:
         portrayal["Shape"] = "assets/images/bomberman.png"
         portrayal["Layer"] = 1
+    elif type(agent) is BombAgent:
+        portrayal["Shape"] = "assets/images/bomb.png"
+        portrayal["Layer"] = 0
+    elif type(agent) is BlastAgent:
+        portrayal["Shape"] = "assets/images/blast.png"
+        portrayal["Layer"] = 0
     elif type(agent) is GoalAgent:
         portrayal["Shape"] = "assets/images/goal.png"
         portrayal["Layer"] = 0
@@ -68,7 +76,7 @@ def create_server(map):
         "search_strategy": Choice(
             "Search strategy",
             value="DFS",
-            choices=["DFS", "BFS", "UCS"],
+            choices=["DFS", "BFS", "UCS", "A*"],
         )
     }
 

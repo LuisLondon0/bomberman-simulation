@@ -6,11 +6,15 @@ from factories.search_factory import SearchFactory
 from agents.bomberman import BombermanAgent
 from agents.goal import GoalAgent
 from agents.enemy import EnemyAgent
+from agents.blast import BlastAgent
+from agents.road import RoadAgent
 
 class LabyrinthModel(Model):
     def __init__(self, width, height, map, search_strategy):
+        super().__init__()
         self.grid = MultiGrid(width, height, True)
         self.schedule = RandomActivation(self)
+        self.goal_coords = None
 
         search_strategy = SearchFactory.create_search(search_strategy)
 
@@ -25,6 +29,9 @@ class LabyrinthModel(Model):
                     self.grid.place_agent(metal, (x, y))
                     self.schedule.add(metal)
                 elif cell == "R":
+                    road = AgentFactory.create_agent("road", (x, y), self)
+                    self.grid.place_agent(road, (x, y))
+                    self.schedule.add(road)
                     rock = AgentFactory.create_agent("rock", (x, y), self)
                     self.grid.place_agent(rock, (x, y))
                     self.schedule.add(rock)
@@ -40,6 +47,7 @@ class LabyrinthModel(Model):
                     goal = AgentFactory.create_agent("goal", (x, y), self)
                     self.grid.place_agent(goal, (x, y))
                     self.schedule.add(goal)
+                    self.goal_coords = (x, y)
                 elif cell == "C_e":
                     road = AgentFactory.create_agent("road", (x, y), self)
                     self.grid.place_agent(road, (x, y))
@@ -52,19 +60,32 @@ class LabyrinthModel(Model):
 
     def step(self):
         self.schedule.step()
-        self.check_bomberman_and_goal()
+        self.check_conditions()
 
-    def check_bomberman_and_goal(self):
+    def check_conditions(self):
         for cell in self.grid.coord_iter():
             cell_content, (x, y) = cell
-            bomberman_present = any(isinstance(agent, BombermanAgent) for agent in cell_content)
-            goal_present = any(isinstance(agent, GoalAgent) for agent in cell_content)
-            enemy_present = any(isinstance(agent, EnemyAgent) for agent in cell_content)
             
-            if bomberman_present and goal_present:
-                self.running = False
-                break
+            bomberman_present = enemy_present = goal_present = blast_present = False
             
-            if bomberman_present and enemy_present:
-                self.running = False
-                break
+            for agent in cell_content:
+                if isinstance(agent, BombermanAgent):
+                    bomberman_present = True
+                elif isinstance(agent, GoalAgent):
+                    goal_present = True
+                elif isinstance(agent, EnemyAgent):
+                    enemy_present = True
+                elif isinstance(agent, BlastAgent):
+                    blast_present = True
+                
+                if (bomberman_present and goal_present) or (bomberman_present and enemy_present):
+                    self.running = False
+                    return
+                
+            if blast_present:
+                agents_to_keep = [agent for agent in cell_content if isinstance(agent, (RoadAgent, GoalAgent, BlastAgent))]
+                agents_to_remove = set(cell_content) - set(agents_to_keep)
+
+                for agent in agents_to_remove:
+                    self.grid.remove_agent(agent)
+                    self.schedule.remove(agent)
