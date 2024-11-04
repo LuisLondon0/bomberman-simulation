@@ -3,6 +3,7 @@ from searches.search_strategy import SearchStrategy
 from agents.goal import GoalAgent
 from agents.road import RoadAgent
 from agents.enemy import EnemyAgent
+from agents.rock import RockAgent
 from typing import List, Tuple
 from mesa import Agent
 
@@ -41,7 +42,7 @@ class BFS(SearchStrategy):
                         and new_position not in self.visited
                     ):
                         agents_in_new_cell = agent.model.grid[new_x][new_y]
-                        if all(isinstance(a, (RoadAgent, GoalAgent, EnemyAgent)) for a in agents_in_new_cell):
+                        if all(isinstance(a, (RoadAgent, GoalAgent, EnemyAgent, RockAgent)) for a in agents_in_new_cell):
                             self.queue.append((new_position, path + [new_position]))
 
         return []

@@ -2,6 +2,7 @@ from searches.search_strategy import SearchStrategy
 from agents.goal import GoalAgent
 from agents.road import RoadAgent
 from agents.enemy import EnemyAgent
+from agents.rock import RockAgent
 import heapq
 from typing import List, Tuple
 
@@ -48,7 +49,7 @@ class UniformCostSearch(SearchStrategy):
                         and new_position not in self.visited
                     ):
                         agents_in_new_cell = agent.model.grid[new_x][new_y]
-                        if all(isinstance(a, (RoadAgent, GoalAgent, EnemyAgent)) for a in agents_in_new_cell):
+                        if all(isinstance(a, (RoadAgent, GoalAgent, EnemyAgent, RockAgent)) for a in agents_in_new_cell):
                             new_cost = current_cost + (13 if is_diagonal else 10)
                             if new_position not in self.cost_so_far or new_cost < self.cost_so_far[new_position]:
                                 self.cost_so_far[new_position] = new_cost
