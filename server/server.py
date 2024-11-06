@@ -76,7 +76,12 @@ def create_server(map):
         "search_strategy": Choice(
             "Search strategy",
             value="DFS",
-            choices=["DFS", "BFS", "UCS", "A*"],
+            choices=["DFS", "BFS", "UCS", "A*", "HILL_CLIMBING"],
+        ),
+        "heuristic": Choice(
+            "Heuristic (Informed searches only)",
+            value="Manhattan",
+            choices=["Manhattan", "Euclidean"],
         )
     }
 

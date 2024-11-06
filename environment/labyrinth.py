@@ -10,13 +10,13 @@ from agents.blast import BlastAgent
 from agents.road import RoadAgent
 
 class LabyrinthModel(Model):
-    def __init__(self, width, height, map, search_strategy):
+    def __init__(self, width, height, map, search_strategy, heuristic):
         super().__init__()
         self.grid = MultiGrid(width, height, True)
         self.schedule = RandomActivation(self)
         self.goal_coords = None
 
-        search_strategy = SearchFactory.create_search(search_strategy)
+        search_strategy = SearchFactory.create_search(search_strategy, heuristic)
 
         for y, row in enumerate(map):
             for x, cell in enumerate(row):
@@ -44,6 +44,9 @@ class LabyrinthModel(Model):
                     self.grid.place_agent(bomberman, (x, y))
                     self.schedule.add(bomberman)
                 elif cell == "C_m":
+                    road = AgentFactory.create_agent("road", (x, y), self)
+                    self.grid.place_agent(road, (x, y))
+                    self.schedule.add(road)
                     goal = AgentFactory.create_agent("goal", (x, y), self)
                     self.grid.place_agent(goal, (x, y))
                     self.schedule.add(goal)

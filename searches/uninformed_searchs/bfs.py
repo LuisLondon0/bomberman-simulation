@@ -13,7 +13,13 @@ class BFS(SearchStrategy):
         self.visited = set()
         self.step_count = 0
 
-    def search(self, start: Tuple[int, int], agent: Agent, diagonal: bool) -> List[Tuple[int, int]]:
+    def search(self, start: Tuple[int, int], agent: Agent, diagonal: bool = False, directions: List[Tuple[int, int]] = None) -> List[Tuple[int, int]]:
+        if directions is None:
+            if diagonal:
+                directions = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1)]
+            else:
+                directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+
         self.queue.append((start, [start]))
 
         while self.queue:
@@ -27,10 +33,6 @@ class BFS(SearchStrategy):
                 agent.model.grid[current[0]][current[1]][0].visit_order = self.step_count
                 self.step_count += 1
                 self.visited.add(current)
-
-                directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
-                if diagonal:
-                    directions += [(1, 1), (1, -1), (-1, 1), (-1, -1)]
 
                 for direction in directions:
                     new_x, new_y = current[0] + direction[0], current[1] + direction[1]

@@ -5,24 +5,29 @@ from agents.enemy import EnemyAgent
 from agents.rock import RockAgent
 import heapq
 from typing import List, Tuple
+from utils.utils import heuristic
 
 class AStarSearch(SearchStrategy):
-    def __init__(self):
+    def __init__(self, heuristic_type):
         self.priority_queue = []
         self.visited = set()
         self.cost_so_far = {}
         self.step_count = 0
         self.index = 0
         self.goal = None
+        self.heuristic_type = heuristic_type
 
-    def heuristic(self, current: Tuple[int, int], goal: Tuple[int, int]) -> int:
-        return (abs(current[0] - goal[0]) + abs(current[1] - goal[1])) * 10
-
-    def search(self, start: Tuple[int, int], agent, diagonal: bool = False) -> List[Tuple[int, int]]:
+    def search(self, start: Tuple[int, int], agent, diagonal: bool = False, directions: List[Tuple[int, int]] = None) -> List[Tuple[int, int]]:
         if not self.goal:
             self.goal = agent.model.goal_coords
 
-        heapq.heappush(self.priority_queue, (0, 0, 0, self.index, start, [start]))
+        if directions is None:
+            if diagonal:
+                directions = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1)]
+            else:
+                directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+
+        heapq.heappush(self.priority_queue, (0, self.index, 0, 0, start, [start]))
         self.cost_so_far[start] = 0
         self.index += 1
 
@@ -38,17 +43,10 @@ class AStarSearch(SearchStrategy):
                 self.step_count += 1
                 self.visited.add(current)
 
-                if diagonal:
-                    directions = [
-                        (0, 1, False), (1, 1, True), (1, 0, False), (1, -1, True),
-                        (0, -1, False), (-1, -1, True), (-1, 0, False), (-1, 1, True)
-                    ]
-                else:
-                    directions = [(-1, 0, False), (0, 1, False), (1, 0, False), (0, -1, False)]
-
                 for direction in directions:
-                    new_x, new_y, is_diagonal = current[0] + direction[0], current[1] + direction[1], direction[2]
+                    new_x, new_y = current[0] + direction[0], current[1] + direction[1]
                     new_position = (new_x, new_y)
+                    is_diagonal = abs(direction[0]) + abs(direction[1]) == 2
 
                     if (
                         0 <= new_x < agent.model.grid.width
@@ -58,12 +56,12 @@ class AStarSearch(SearchStrategy):
                         agents_in_new_cell = agent.model.grid[new_x][new_y]
                         if all(isinstance(a, (RoadAgent, GoalAgent, EnemyAgent, RockAgent)) for a in agents_in_new_cell):
                             new_cost = self.cost_so_far[current] + (13 if is_diagonal else 10)
-                            heuristic_cost = self.heuristic(new_position, self.goal)
+                            heuristic_cost = heuristic(new_position, self.goal, self.heuristic_type)
                             total_cost = new_cost + heuristic_cost
 
                             if new_position not in self.cost_so_far or new_cost < self.cost_so_far[new_position]:
                                 self.cost_so_far[new_position] = new_cost
-                                heapq.heappush(self.priority_queue, (total_cost, new_cost, heuristic_cost, self.index, new_position, path + [new_position]))
+                                heapq.heappush(self.priority_queue, (total_cost, self.index, new_cost, heuristic_cost, new_position, path + [new_position]))
                                 self.index += 1
 
         return []

@@ -11,7 +11,13 @@ class DFS(SearchStrategy):
         self.visited = set()
         self.step_count = 0
 
-    def search(self, start: Tuple[int, int], agent, diagonal: bool = False) -> List[Tuple[int, int]]:
+    def search(self, start: Tuple[int, int], agent, diagonal: bool = False, directions: List[Tuple[int, int]] = None) -> List[Tuple[int, int]]:
+        if directions is None:
+            if diagonal:
+                directions = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1)]
+            else:
+                directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+
         self.stack.append((start, [start]))
         path_to_exit = []
 
@@ -28,16 +34,7 @@ class DFS(SearchStrategy):
                 self.step_count += 1
                 self.visited.add(current)
 
-                if diagonal:
-                    directions = [
-                        (0, 1), (1, 1), (1, 0), (1, -1),
-                        (0, -1), (-1, -1), (-1, 0), (-1, 1)
-                    ]
-                else:
-                    directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
-
-                directions.reverse()
-                for direction in directions:
+                for direction in directions[::-1]:
                     new_x, new_y = current[0] + direction[0], current[1] + direction[1]
                     new_position = (new_x, new_y)
 
