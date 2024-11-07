@@ -25,7 +25,6 @@ class HillClimbingSearch(SearchStrategy):
         level = 0
         stack = [(start, level, [start])]
         best_path = []
-
         priority_order = {direction: idx for idx, direction in enumerate(directions)}
 
         while stack:
@@ -52,11 +51,26 @@ class HillClimbingSearch(SearchStrategy):
                         direction_priority = priority_order.get((dx, dy), float('inf'))
                         neighbors.append((heuristic_cost, direction_priority, new_position))
 
-            neighbors.sort(key=lambda x: (x[0], x[1]), reverse=True)
+            aux = 0
+            if neighbors:
+                neighbors.sort(key=lambda x: (x[0], x[1]), reverse=True)
+                for _, _, neighbor in neighbors:
+                    if not agent.model.grid[neighbor[0]][neighbor[1]][0].visit_order:
+                        stack.append((neighbor, level, path + [neighbor]))
+                        agent.model.grid[neighbor[0]][neighbor[1]][0].visit_order = level
+                        aux += 1
 
-            for _, _, neighbor in neighbors:
-                if not agent.model.grid[neighbor[0]][neighbor[1]][0].visit_order:
-                    stack.append((neighbor, level, path + [neighbor]))
-                    agent.model.grid[neighbor[0]][neighbor[1]][0].visit_order = level
+            if aux == 0:
+                level -= 1
+                unvisited_positions = [
+                    (lvl, heuristic(pos, self.goal, self.heuristic_type), pos, pth)
+                    for pos, lvl, pth in stack
+                    if pos not in self.visited
+                ]
+                
+                if unvisited_positions:
+                    unvisited_positions.sort(key=lambda x: (x[0], x[1]))
+                    _, _, best_position, best_path_to_position = unvisited_positions[0]
+                    stack.append((best_position, level, best_path_to_position + [best_position]))
 
         return best_path
