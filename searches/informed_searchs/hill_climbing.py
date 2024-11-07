@@ -11,6 +11,7 @@ class HillClimbingSearch(SearchStrategy):
         self.visited = set()
         self.goal = None
         self.heuristic_type = heuristic_type
+        self.back_nums = 0
 
     def search(self, start: Tuple[int, int], agent, diagonal: bool = False, directions: List[Tuple[int, int]] = None) -> List[Tuple[int, int]]:
         if not self.goal:
@@ -23,6 +24,8 @@ class HillClimbingSearch(SearchStrategy):
                 directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
         
         level = 0
+        step = 0
+        agent.model.grid[start[0]][start[1]][0].visit_order = str(step)
         stack = [(start, level, [start])]
         best_path = []
         priority_order = {direction: idx for idx, direction in enumerate(directions)}
@@ -30,9 +33,14 @@ class HillClimbingSearch(SearchStrategy):
         while stack:
             level += 1
             current_position, _, path = stack.pop()
+            agent.model.grid[current_position[0]][current_position[1]][0].visit_order += " (" + str(step) + ")"
             self.visited.add(current_position)
+            step += 1
 
             if current_position == self.goal:
+                print("-------------------------------------")
+                print("VECES QUE VUELVE ATRAS: ", self.back_nums)
+                print("-------------------------------------")
                 return path
 
             neighbors = []
@@ -57,10 +65,11 @@ class HillClimbingSearch(SearchStrategy):
                 for _, _, neighbor in neighbors:
                     if not agent.model.grid[neighbor[0]][neighbor[1]][0].visit_order:
                         stack.append((neighbor, level, path + [neighbor]))
-                        agent.model.grid[neighbor[0]][neighbor[1]][0].visit_order = level
+                        agent.model.grid[neighbor[0]][neighbor[1]][0].visit_order = str(level)
                         aux += 1
 
             if aux == 0:
+                self.back_nums += 1
                 level -= 1
                 unvisited_positions = [
                     (lvl, heuristic(pos, self.goal, self.heuristic_type), pos, pth)

@@ -23,8 +23,9 @@ class BombermanAgent(Agent):
                 start_position = (self.pos[0], self.pos[1])
                 self.path_to_exit = self.search_strategy.search(start_position, self, diagonal=False)
                 self.has_explored = bool(self.path_to_exit)
-                next_pos = self.path_to_exit.pop(0)
-                self.model.grid.move_agent(self, next_pos)
+                if self.has_explored:
+                    next_pos = self.path_to_exit.pop(0)
+                    self.model.grid.move_agent(self, next_pos)
 
             if self.path_to_exit:
                 next_pos = self.path_to_exit.pop(0)

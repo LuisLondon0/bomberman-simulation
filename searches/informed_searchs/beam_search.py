@@ -11,7 +11,7 @@ class BeamSearch(SearchStrategy):
         self.visited = set()
         self.goal = None
         self.heuristic_type = heuristic_type
-        self.beam_width = max(1, beam_width)  # Asegurarse de que sea al menos 1
+        self.beam_width = max(1, beam_width)
 
     def search(self, start: Tuple[int, int], agent, diagonal: bool = False, directions: List[Tuple[int, int]] = None) -> List[Tuple[int, int]]:
         if not self.goal:
@@ -23,23 +23,23 @@ class BeamSearch(SearchStrategy):
             else:
                 directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
         
-        level = -1
-        beam = [(start, level, [start])]
+        step = -1
+        beam = [(start, 0, [start])]
+        aux_bem = []
         priority_order = {direction: idx for idx, direction in enumerate(directions)}
-
-        agent.model.grid[start[0]][start[1]][0].visit_order = "0"
         
         while beam:
-            level += 1
             next_beam = []
 
-            for current_position, _, path in beam:
-                self.visited.add(current_position)
-                if not agent.model.grid[current_position[0]][current_position[1]][0].visit_order:
-                    agent.model.grid[current_position[0]][current_position[1]][0].visit_order = level
-
+            for current_position, level, path in beam:
+                step += 1
                 if current_position == self.goal:
                     return path
+                
+
+                self.visited.add(current_position)
+                if not agent.model.grid[current_position[0]][current_position[1]][0].visit_order:
+                    agent.model.grid[current_position[0]][current_position[1]][0].visit_order = str(level) + " (" + str(step) + ")"
 
                 neighbors = []
                 for dx, dy in directions:
@@ -57,25 +57,21 @@ class BeamSearch(SearchStrategy):
                             direction_priority = priority_order.get((dx, dy), float('inf'))
                             neighbors.append((heuristic_cost, direction_priority, new_position, path + [new_position]))
 
-                # Ordena los vecinos primero por costo heurístico y luego por prioridad de dirección
-                neighbors.sort(key=lambda x: (x[0], x[1]))
-                
-                # Agrega solo los mejores vecinos a `next_beam` según `beam_width`
-                next_beam.extend(neighbors[:self.beam_width])
+                if neighbors:
+                    next_beam.extend(neighbors)
 
-            # Actualiza el beam con los nuevos nodos seleccionados
-            beam = [(pos, level, path) for _, _, pos, path in next_beam]
+            next_beam.sort(key=lambda x: (x[0], x[1]))
+            beam = [(pos, level + 1, path) for _, _, pos, path in next_beam[:self.beam_width]]
+            aux_bem.extend([(pos, level + 1, path) for _, _, pos, path in next_beam[self.beam_width:]])
 
-            # Condición de escape en caso de que no haya más opciones
-            if not beam and next_beam:
-                # Selecciona el mejor camino basado en el costo heurístico y el nivel
-                paths_by_level = sorted(
-                    ((lvl, heuristic(pos, self.goal, self.heuristic_type), pos, path)
-                     for pos, lvl, path in next_beam),
-                    key=lambda x: (x[0], x[1])
-                )
-                if paths_by_level:
-                    _, _, best_position, best_path = paths_by_level[0]
-                    return best_path
-
-        return []
+            if not beam and aux_bem:
+                min_level = min([level for _, level, _ in aux_bem])
+                i = 0
+                for idx, (pos, level, path) in enumerate(aux_bem):
+                    if level == min_level and i < self.beam_width:
+                        i += 1
+                        beam.append((pos, level, path))
+                        aux_bem.pop(idx)
+            
+            if not beam and not aux_bem:
+                return []
