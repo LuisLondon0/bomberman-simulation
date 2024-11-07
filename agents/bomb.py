@@ -6,7 +6,7 @@ from agents.rock import RockAgent
 class BombAgent(Agent):
     def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
-        self.power = 2
+        self.power = 1
         self.timer = self.power + 1
     
     def step(self):

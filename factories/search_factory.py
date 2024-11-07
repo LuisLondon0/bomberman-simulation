@@ -1,5 +1,5 @@
 #Searches import
-from searches.informed_searchs import a_star, hill_climbing
+from searches.informed_searchs import a_star, hill_climbing, beam_search
 from searches.uninformed_searchs import dfs, bfs, uniform_cost
 from searches.game_theory import *
 
@@ -16,5 +16,7 @@ class SearchFactory:
             return a_star.AStarSearch(heuristic_type.lower())
         elif type == "HILL_CLIMBING":
             return hill_climbing.HillClimbingSearch(heuristic_type.lower())
+        elif type == "BEAM_SEARCH":
+            return beam_search.BeamSearch(heuristic_type.lower(), 2)
         else:
             raise ValueError("Invalid search type")
