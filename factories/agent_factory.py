@@ -8,9 +8,9 @@ from agents.enemy import EnemyAgent
 
 class AgentFactory:
     @staticmethod
-    def create_agent(type, unique_id, model, search_strategy = None):
+    def create_agent(type, unique_id, model, search_strategy = None, difficulty = None, depth = None):
         if type == "bomberman":
-            return BombermanAgent(unique_id, model, search_strategy)
+            return BombermanAgent(unique_id, model, search_strategy, depth)
         elif type == "goal":
             return GoalAgent(unique_id, model)
         elif type == "metal":
@@ -20,6 +20,6 @@ class AgentFactory:
         elif type == "rock":
             return RockAgent(unique_id, model)
         elif type == "enemy":
-            return EnemyAgent(unique_id, model, search_strategy)
+            return EnemyAgent(unique_id, model, difficulty)
         else:
             raise ValueError("Invalid agent type")

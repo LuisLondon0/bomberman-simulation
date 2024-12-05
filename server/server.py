@@ -76,12 +76,22 @@ def create_server(map):
         "search_strategy": Choice(
             "Search strategy",
             value="DFS",
-            choices=["DFS", "BFS", "UCS", "A*", "HILL_CLIMBING", "BEAM_SEARCH"],
+            choices=["DFS", "BFS", "UCS", "A*", "HILL_CLIMBING", "BEAM_SEARCH", "ALPHA_BETA_PRUNING"],
         ),
         "heuristic": Choice(
             "Heuristic (Informed searches only)",
             value="Manhattan",
             choices=["Manhattan", "Euclidean"],
+        ),
+        "difficulty": Choice(
+            "Enemy difficulty",
+            value="Easy",
+            choices=["Easy", "Medium", "Hard"],
+        ),
+        "depth": Choice(
+            "Depth (Alpha-Beta Pruning only)",
+            value=2,
+            choices=[2, 4, 6]
         )
     }
 

@@ -1,0 +1,41 @@
+Cambios hechos para mostrar cantidad de nodos podados:
+
+En el archivo alpha_beta_pruning.py:
+* Línea 20: Se agrego una variable como atributo de la clase para almacenar el valor de todas las podas
+
+//Turno bomberman
+* Línea 45: Se añadió una variable aux, esta variable va a almacenar cuantos nodos se expandieron con normalidad
+
+*Línea 48: Aquí se le suma a aux el nodo que se acaba de expandir
+
+*Línea 57: Se imprime cuantas podas se acaban de hacer en el llamado actual, para esto se le resta al total de nodos hijos la cantidad de nodos expandidos 
+
+*Línea 58: La cantidad de nodos podados se le suma a la variable global
+
+
+//Turno enemigo
+* Línea 66: Se añadió una variable aux, esta variable va a almacenar cuantos nodos se expandieron con normalidad
+
+*Línea 69: Aquí se le suma a aux el nodo que se acaba de expandir
+
+*Línea 78: Se imprime cuantas podas se acaban de hacer en el llamado actual, para esto se le resta al total de nodos hijos la cantidad de nodos expandidos 
+
+*Línea 79: La cantidad de nodos podados se le suma a la variable global
+
+
+
+En el archivo bomberman.py:
+*Línea 25: Se pone el atributo de podas en 0 en cada paso
+
+*Línea 27: Se trae en una variable el total de podas que se hicieron en ese paso
+
+*Línea 28: Se imprime el total
+
+
+
+En el archivo enemy.py:
+*Línea 54: Se pone el atributo de podas en 0 en cada paso
+
+*Línea 56: Se trae en una variable el total de podas que se hicieron en ese paso
+
+*Línea 57: Se imprime el total
